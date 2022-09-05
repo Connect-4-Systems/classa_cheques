@@ -20,6 +20,8 @@ def cheque(doc, method=None):
 	default_cash_account = frappe.db.get_value("Company", doc.company, "default_cash_account")
 	default_bank_commissions_account = frappe.db.get_value("Company", doc.company, "default_bank_commissions_account")
 	default_receivable_account = frappe.db.get_value("Company", doc.company, "default_receivable_account")
+	new_mode_of_payment_account = frappe.db.get_value('Mode of Payment Account', {'parent': doc.new_mode_of_payment},
+													  'default_account')
 
 	if not doc.cheque_bank and doc.cheque_action == "إيداع شيك تحت التحصيل":
 		frappe.throw(_(" برجاء تحديد البنك والحساب البنكي "))
@@ -115,7 +117,7 @@ def cheque(doc, method=None):
 			},
 			{
 				"doctype": "Journal Entry Account",
-				"account": doc.paid_to,
+				"account": new_mode_of_payment_account,
 				"credit": doc.paid_amount,
 				"debit": 0,
 				"credit_in_account_currency": doc.paid_amount,
@@ -163,7 +165,7 @@ def cheque(doc, method=None):
 			},
 			{
 				"doctype": "Journal Entry Account",
-				"account": doc.paid_to,
+				"account": new_mode_of_payment_account,
 				"debit": 0,
 				"credit": doc.paid_amount,
 				"credit_in_account_currency": doc.paid_amount,
@@ -210,7 +212,7 @@ def cheque(doc, method=None):
 			},
 			{
 				"doctype": "Journal Entry Account",
-				"account": doc.paid_to,
+				"account": new_mode_of_payment_account,
 				"debit": 0,
 				"credit": doc.paid_amount,
 				"credit_in_account_currency": doc.paid_amount,
